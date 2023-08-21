@@ -20,4 +20,18 @@ This repository contains Python implementations of various search algorithms to 
 ## Running the Code
 
 1. Clone the repository to your local machine:
+   git clone https://github.com/Mayur9167/AI_Puzzle_Solution.git
+
+2. Navigate/Open the directory:
+   cd AI_Puzzle_Solution
+
+3. Run command:
+   python python_file_name.py
+
+## Compatibility Note
+
+Please note that some parts of the code might not work as expected on the Windows terminal due to differences in terminal behavior and encoding. These issues might manifest as Unicode errors, formatting discrepancies, or other unexpected behavior.
+
+We recommend running the code on a Unix-like environment (e.g., Linux or macOS) or using a terminal emulator that is compatible with Python and supports the required encoding.
+   
 
