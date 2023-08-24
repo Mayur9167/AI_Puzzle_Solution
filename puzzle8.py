@@ -1,4 +1,21 @@
 from collections import deque
+import heapq
+
+
+# Function to print a state in matrix format
+def print_state_matrix(state):
+    for row in state:
+        print(row)
+    print()
+
+# Function to print solutions in matrix format
+def print_solution_matrix(solution):
+    for i in range(0, len(solution), 3):
+        for j in range(3):
+            if i + j < len(solution):
+                print_state_matrix(solution[i + j])
+        print()
+
 
 # Helper function to swap tiles
 def swap_tiles(state, i1, j1, i2, j2):
@@ -67,6 +84,56 @@ def dfs(initial_state, goal_state, depth_limit=10):
 
     return None
 
+
+
+
+# Helper function to calculate the Manhattan distance heuristic
+def manhattan_distance(state, goal_state):
+    distance = 0
+    for i in range(3):
+        for j in range(3):
+            value = state[i][j]
+            if value != 0:
+                goal_i, goal_j = divmod(value - 1, 3)
+                distance += abs(i - goal_i) + abs(j - goal_j)
+    return distance
+
+# A* Search
+def astar(initial_state, goal_state):
+    open_list = [(manhattan_distance(initial_state, goal_state), initial_state, [])]
+    visited = set()
+
+    while open_list:
+        _, current_state, path = heapq.heappop(open_list)
+        visited.add(tuple(map(tuple, current_state)))
+
+        if is_goal(current_state, goal_state):
+            return path
+
+        successors = generate_successors(current_state)
+        for successor in successors:
+            if tuple(map(tuple, successor)) not in visited:
+                heapq.heappush(open_list, (len(path) + manhattan_distance(successor, goal_state), successor, path + [successor]))
+
+    return None
+
+# Hill Climbing
+def hill_climbing(initial_state, goal_state, max_iterations=1000):
+    current_state = initial_state
+    for _ in range(max_iterations):
+        successors = generate_successors(current_state)
+        best_successor = min(successors, key=lambda successor: manhattan_distance(successor, goal_state))
+
+        if manhattan_distance(best_successor, goal_state) >= manhattan_distance(current_state, goal_state):
+            return None
+
+        if is_goal(best_successor, goal_state):
+            return [initial_state] + [best_successor]
+
+        current_state = best_successor
+
+    return None
+
 # Example puzzle and goal state
 initial_state = [
     [7, 2, 4],
@@ -95,17 +162,27 @@ print()
 
 # Solve using DFS
 dfs_solution = dfs(initial_state, goal_state)
-print("DFS Solution:")
+print("\nDFS Solution:")
 if dfs_solution:
     for step in dfs_solution:
         print(step)
 else:
     print("No solution found.")
 
+# Solve using A*
+astar_solution = astar(initial_state, goal_state)
+print("\nA* Solution:")
+if astar_solution:
+    print_solution_matrix(astar_solution)
+else:
+    print("No solution found.")
 
+print()
 
-
-
-
-
-
+# Solve using Hill Climbing
+hillclimb_solution = hill_climbing(initial_state, goal_state)
+print("Hill Climbing Solution:")
+if hillclimb_solution:
+    print_solution_matrix(hillclimb_solution)
+else:
+    print("No solution found.")
